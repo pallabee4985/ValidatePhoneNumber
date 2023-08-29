@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        .logo{
+            width:16vw;
+            height: 12vh;
+            display:flex;
+            justify-items:flex-start;
+            padding:5px;   
+            position: absolute;  
+            top:10vh;   
+            left:15vw;    
+        }
+        .heading{
+            position:absolute;
+            top:30vh;
+            font-size:3rem;
+            font-display: inherit;
+        }
+        #phoneNumber{
+            font-weight:650;
+            font-size: 11rem;
+            margin: auto;
+            color:#3a3c3d
+        }
+        #darker{
+            color:#7d8082
+        }
+        #myBtn{
+            color:#F5F5F5;
+            background-color: #101417;
+            /* border-radius: 40%; */
+        }
+        #myBtn:hover{
+            background: #F5F5F5;
+            color:#101417;
+        }
+        #validatebtn{
+            background-color: #F5F5F5;
+            color:#101417;
+            border: solid black;
+        }
+        #validatebtn:hover{
+            color:#F5F5F5;
+            background-color: #101417;
+        }
+        .modal-dialog{
+            position: absolute;
+    right: 0;
+    top:0;
+    height: 100%;
+    width:22vw;
+    background: white;
+     border-top-left-radius: 5%;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class=" container-fluid bg-dark">
+        <div class="first">
+            <div class="row d-flex justify-content-center p-4 ">
+                <div class="col-5 d-flex align-items-center flex-column first">
+                    <img class="logo" src="/habytat_logo.png" alt="logo">
+                    <div class="align-items-center heading">
+                    <h1 id="darker">Did you Know ?</h1><br/>
+                    <h2 class="text-light ">67% phone<br/>number submited<br/>through online<br/>is invalid</h2>
+                    <button class="btn rounded-pill border border-white " id="myBtn"type="button"data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="handleClick()">check mobile number validity</button>
+                    </div>       
+                </div>
+                <div class="col-5 ">
+                    <img class="" src="/Product teardown-bro.svg" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <h1 id="phoneNumber">PHONE NUMBER</h1>
+            </div>
+        </div>
+           
+    </div>
+     <!-- sidebar -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content ">
+        <div class="">
+            <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close"><b style="font-size: 2rem;">&larr;</b></button>
+        </div>
+          <h2 class="modal-title" id="exampleModalLabel" style="color:#7d8082">check phone number <br>validity</h2> <br/><br/>
+          <!-- <h5 align="center">phone number</h5> -->
+          <div>
+        <select id="select" style="width:5vw"></select><input id="input1" type="number" placeholder="Enter your number" ><br/>
+          </div><br/>
+          
+        
+          <button type="button" class="btn rounded-pill " id="validatebtn" onclick="submitHandler()">check for validity</button>
+      </div>
+    </div>
+  </div>
+    <script>
+            let select=document.getElementById('select')
+            const inputText=document.getElementById("input1");
+             let out;//for the number input by user
+             let Country //whole data
+             let First4 //slicing number for validation
+        fetch("country_codes.json").then(function(res){
+            return res.json();
+        }).then(function (data){
+            console.log(data);
+
+            Country= data
+            
+        }).catch(function (err){
+            console.error("somthing went wront with retriving the data");
+            console.error("err");
+        })
+
+            inputText.addEventListener("input", ()=>{
+                 out=inputText.value;
+                 document.getElementById("validatebtn").innerText="check for validity"
+                // console.log(out)
+            })
+        function submitHandler(){
+            
+            console.log("inside submit",out); //no input by user
+            console.log(Country); //array
+            let code=select.value; //for country code
+            console.log("....",code); //select tag value
+            let obj=Country.find((e)=>{ return e.dial_code==code})
+            console.log(obj)
+            
+            for(i of obj.mobile_validation[0].start_with){
+                console.log("i",i);
+                if(out.startsWith(i)){
+                    First4=true;
+                }
+                
+
+                }
+
+            
+            
+            if((out.length==obj.mobile_validation[0].size)&& First4===true){
+                // console.log("inside if:");
+                document.getElementById("validatebtn").style.backgroundColor="#56C123"
+                document.getElementById("validatebtn").innerText="The Mobile number is valid"
+            }
+            else{
+                // console.log("inside else:");
+                document.getElementById("validatebtn").style.backgroundColor="#FE2434"
+                document.getElementById("validatebtn").innerText="The Mobile number is not valid"
+            }
+        }
+        function handleClick(){
+           
+            Country.map((e)=>{
+                let opp=document.createElement("option")
+                opp.innerHTML=`${e.dial_code} `
+                select.appendChild(opp)
+            })
+        }
+        
+        
+
+
+    </script>
+    
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    
+</body>
+</html>
